@@ -10,6 +10,7 @@ import { Analytics } from './components/Analytics'
 import { CreateMeetingForm } from './components/CreateMeetingForm'
 import { MeetingTable } from './components/MeetingTable'
 import { AttendeeList } from './components/AttendeeList'
+import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 
 interface Meeting {
   id: string
@@ -35,6 +36,8 @@ export default function AdminDashboard() {
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null)
+  const [showQRCode, setShowQRCode] = useState(false)
 
   // Fetch meetings on component mount
   useEffect(() => {
@@ -109,10 +112,16 @@ export default function AdminDashboard() {
   const handleShowQRCode = async (meetingId: string) => {
     try {
       const qrCodeData = await meetings.generateQRCode(meetingId)
-      // TODO: Show QR code in a modal
-      console.log('QR Code data:', qrCodeData)
-    } catch (err) {
+      console.log('QR Code Response:', qrCodeData) // Debug log
+      if (!qrCodeData || !qrCodeData.qrCode) {
+        throw new Error('Invalid QR code data received from server')
+      }
+      setQrCodeData(qrCodeData)
+      setShowQRCode(true)
+    } catch (err: any) {
       console.error('Error generating QR code:', err)
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to generate QR code. Please try again.'
+      setError(errorMessage)
     }
   }
 
@@ -197,6 +206,27 @@ export default function AdminDashboard() {
             onClose={() => setExpandedMeeting(null)}
           />
         )}
+
+        {/* QR Code Modal */}
+        <Dialog 
+          open={showQRCode} 
+          onClose={() => setShowQRCode(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Meeting QR Code</DialogTitle>
+          <DialogContent>
+            <div className="flex flex-col items-center p-4">
+              {qrCodeData && (
+                <img 
+                  src={`data:image/png;base64,${qrCodeData.qrCode}`} 
+                  alt="Meeting QR Code" 
+                  className="max-w-full h-auto"
+                />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

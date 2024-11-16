@@ -182,7 +182,8 @@ export const meetings = {
   },
 
   generateQRCode: async (meetingId: string) => {
-    const response = await api.get(`/admin/meetings/${meetingId}/qr-code`)
+    const response = await api.get(`/meetings/${meetingId}/qr-code`)
+    console.log('QR Code API Response:', response)
     return response.data
   }
 }
