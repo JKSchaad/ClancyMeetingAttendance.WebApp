@@ -46,7 +46,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Temporarily disable HTTPS redirection for development
+// app.UseHttpsRedirection();
 
 // Add CORS middleware before authentication
 app.UseCors();

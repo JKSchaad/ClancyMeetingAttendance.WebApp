@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react'
 import { 
   Plus, 
-  Search
+  Search,
+  LogOut
 } from 'lucide-react'
-import { meetings } from '@/services/api'
+import { meetings, auth } from '@/services/api'
 import { Analytics } from './components/Analytics'
 import { CreateMeetingForm } from './components/CreateMeetingForm'
 import { MeetingTable } from './components/MeetingTable'
 import { AttendeeList } from './components/AttendeeList'
+import { UserList } from './components/UserList'
 import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 
 interface Meeting {
@@ -152,13 +154,22 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Meeting Admin</h1>
-          <button
-            onClick={() => setShowNewMeetingForm(true)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Create New Meeting
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={auth.logout}
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center"
+            >
+              <LogOut className="h-5 w-5 mr-2" />
+              Logout
+            </button>
+            <button
+              onClick={() => setShowNewMeetingForm(true)}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Create New Meeting
+            </button>
+          </div>
         </div>
 
         {/* Analytics Section */}
@@ -181,14 +192,19 @@ export default function AdminDashboard() {
         </div>
 
         {/* Meetings Table */}
-        <MeetingTable 
-          meetings={filteredMeetings}
-          onDownloadAttendance={handleDownloadAttendance}
-          onShowQRCode={handleShowQRCode}
-          expandedMeeting={expandedMeeting}
-          setExpandedMeeting={setExpandedMeeting}
-          isLoading={isLoading}
-        />
+        <div className="mb-8">
+          <MeetingTable 
+            meetings={filteredMeetings}
+            onDownloadAttendance={handleDownloadAttendance}
+            onShowQRCode={handleShowQRCode}
+            expandedMeeting={expandedMeeting}
+            setExpandedMeeting={setExpandedMeeting}
+            isLoading={isLoading}
+          />
+        </div>
+
+        {/* User List */}
+        <UserList />
 
         {/* Create Meeting Modal */}
         {showNewMeetingForm && (

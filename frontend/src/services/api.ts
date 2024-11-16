@@ -191,7 +191,7 @@ export const meetings = {
 // User endpoints
 export const users = {
   getProfile: async () => {
-    const response = await api.get('/users/profile')
+    const response = await api.get('/Users/profile')
     return response.data
   },
 
@@ -200,8 +200,75 @@ export const users = {
     lastName?: string
     phoneNumber?: string
   }) => {
-    const response = await api.patch('/users/profile', data)
+    const response = await api.put('/Users/profile', data)
     return response.data
+  },
+
+  getAllUsers: async () => {
+    const response = await api.get('/Users')
+    return response.data
+  },
+
+  getUser: async (id: string) => {
+    const response = await api.get(`/Users/${id}`)
+    return response.data
+  },
+
+  createUser: async (data: {
+    firstName: string
+    lastName: string
+    email: string
+    phoneNumber: string
+    role?: string
+  }) => {
+    try {
+      console.log('API: Creating user with data:', data)
+      const response = await api.post('/Users', data)
+      console.log('API: User created successfully:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('API: Failed to create user:', error)
+      if (error instanceof AxiosError) {
+        throw new Error(error.response?.data?.message || error.message)
+      }
+      throw error
+    }
+  },
+
+  updateUser: async (id: string, data: {
+    firstName?: string
+    lastName?: string
+    email?: string
+    phoneNumber?: string
+    role?: string
+  }) => {
+    try {
+      console.log('API: Updating user with data:', data)
+      const response = await api.put(`/Users/${id}`, data)
+      console.log('API: User updated successfully:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('API: Failed to update user:', error)
+      if (error instanceof AxiosError) {
+        throw new Error(error.response?.data?.message || error.message)
+      }
+      throw error
+    }
+  },
+
+  deleteUser: async (id: string) => {
+    try {
+      console.log('API: Deleting user:', id)
+      const response = await api.delete(`/Users/${id}`)
+      console.log('API: User deleted successfully')
+      return response.data
+    } catch (error) {
+      console.error('API: Failed to delete user:', error)
+      if (error instanceof AxiosError) {
+        throw new Error(error.response?.data?.message || error.message)
+      }
+      throw error
+    }
   }
 }
 
